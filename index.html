@@ -1,234 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b18">
+  <meta name="description" content="The personal portfolio of Abdulloh Abdurazzokov — a Dong-A University student exploring business, technology, data, and creative digital projects.">
+  <meta name="author" content="Abdulloh Abdurazzokov">
+  <title>Abdulloh Abdurazzokov — Personal Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b18;
+      --panel: rgba(17, 23, 44, .78);
+      --line: rgba(177, 190, 255, .14);
+      --text: #f4f5ff;
+      --muted: #a5abc4;
+      --soft: #d5d8eb;
+      --purple: #a78bfa;
+      --cyan: #67e8f9;
+      --mint: #8ce7c2;
+      --radius: 22px;
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body {
+      margin: 0; min-width: 320px; overflow-x: hidden;
+      background:
+        radial-gradient(ellipse at 12% 12%, rgba(95,73,190,.20), transparent 32rem),
+        radial-gradient(ellipse at 88% 28%, rgba(34,146,174,.13), transparent 30rem),
+        #080b18;
+      color: var(--text); font-family: "DM Sans", sans-serif; line-height: 1.7;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .2;
+      background-image: linear-gradient(rgba(157,169,220,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(157,169,220,.055) 1px,transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom,black,transparent 92%);
+    }
+    a { color: inherit; }
+    .container { width: min(var(--max), calc(100% - 44px)); margin-inline: auto; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid rgba(177,190,255,.1);
+      background: rgba(8,11,24,.78); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    }
+    .nav-wrap { min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand {
+      display: inline-flex; align-items: center; gap: 11px; text-decoration: none;
+      font-family: "Space Grotesk", sans-serif; font-weight: 700; letter-spacing: -.04em; font-size: 19px;
+      white-space: nowrap;
+    }
+    .brand-mark {
+      display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+      color: #0b1020; font-size: 13px; background: linear-gradient(135deg,var(--cyan),var(--purple));
+      box-shadow: 0 0 26px rgba(146,128,255,.25);
+    }
+    .nav-links { display: flex; align-items: center; gap: 25px; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 700; transition: color .2s ease; }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--cyan); }
+    .nav-links .nav-contact { padding: 8px 15px; border: 1px solid rgba(167,139,250,.4); border-radius: 999px; color: var(--text); }
 
-    <title>Abdulloh Abdurazzokov | Portfolio</title>
+    .hero {
+      position: relative; isolation: isolate; overflow: hidden; min-height: 690px;
+      display: flex; align-items: center; padding: 100px 0 92px;
+      background: linear-gradient(115deg,#101329 0%,#111329 48%,#091420 100%);
+    }
+    .hero-video {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2;
+      opacity: .54; filter: saturate(.82) contrast(1.08);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background:
+        linear-gradient(90deg,rgba(7,10,24,.97) 0%,rgba(7,10,24,.84) 40%,rgba(7,10,24,.56) 100%),
+        linear-gradient(0deg,#080b18 0%,transparent 32%,rgba(8,11,24,.14) 70%,#080b18 100%);
+    }
+    .hero::before {
+      content: ""; position: absolute; width: 540px; height: 540px; top: 4%; right: -190px; z-index: -1;
+      border-radius: 50%; background: rgba(114,95,220,.20); filter: blur(95px);
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    @keyframes drift { from { transform: translate3d(0,-15px,0) scale(.95); } to { transform: translate3d(-65px,35px,0) scale(1.08); } }
+    .hero-grid { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(270px,.72fr); gap: 60px; align-items: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px; color: #d7d4ff;
+      background: rgba(167,139,250,.12); border: 1px solid rgba(167,139,250,.3);
+      border-radius: 999px; padding: 7px 13px; font-size: 10px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); }
+    h1,h2,h3 { margin-top: 0; font-family: "Space Grotesk",sans-serif; }
+    h1 { max-width: 760px; margin: 25px 0 18px; font-size: clamp(43px,6vw,76px); line-height: 1.04; letter-spacing: -.065em; font-weight: 700; }
+    .gradient-text { background: linear-gradient(100deg,#9be9f3 4%,#b6a2ff 48%,#e1b4ff 88%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-copy { max-width: 650px; color: #c1c5db; font-size: 16px; line-height: 1.85; }
+    .hero-copy strong { color: #f0efff; font-weight: 700; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 29px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px;
+      padding: 0 20px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: 700;
+      transition: transform .2s ease,border-color .2s ease,background .2s ease;
+    }
+    .btn:hover { transform: translateY(-3px); }
+    .btn-primary { color: #101124; background: linear-gradient(110deg,var(--cyan),#b9a2ff); box-shadow: 0 10px 30px rgba(111,183,229,.16); }
+    .btn-secondary { color: var(--text); border: 1px solid var(--line); background: rgba(255,255,255,.045); }
+    .btn-secondary:hover { border-color: rgba(167,139,250,.6); background: rgba(167,139,250,.1); }
+    .arrow { font-size: 16px; line-height: 1; }
+    .profile-card {
+      position: relative; padding: 25px; border-radius: 25px;
+      border: 1px solid rgba(181,184,255,.22);
+      background: linear-gradient(145deg,rgba(29,37,70,.88),rgba(14,19,39,.88));
+      box-shadow: 0 30px 90px rgba(0,0,0,.32); overflow: hidden;
+    }
+    .profile-card::before { content: ""; position: absolute; width: 190px; height: 190px; right: -105px; top: -105px; border-radius: 50%; background: rgba(103,232,249,.16); filter: blur(4px); }
+    .profile-overline { position: relative; color: var(--cyan); font-size: 10px; text-transform: uppercase; letter-spacing: .15em; font-weight: 700; }
+    .profile-name { position: relative; margin: 8px 0 4px; font-size: 22px; letter-spacing: -.045em; }
+    .profile-sub { position: relative; margin: 0; color: var(--muted); font-size: 12px; }
+    .profile-divider { height: 1px; background: var(--line); margin: 20px 0 12px; }
+    .profile-row { display: flex; justify-content: space-between; gap: 15px; padding: 7px 0; font-size: 12px; }
+    .profile-row span:first-child { color: var(--muted); }
+    .profile-row span:last-child { color: var(--soft); font-weight: 700; text-align: right; }
+    .profile-note { position: relative; margin: 18px 0 0; color: #c9c7e8; font-size: 11px; line-height: 1.7; }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    .section { padding: 77px 0; }
+    .section-heading { max-width: 680px; margin-bottom: 32px; }
+    .section-kicker { color: var(--cyan); font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    h2 { margin: 10px 0 12px; font-size: clamp(29px,4vw,43px); letter-spacing: -.055em; line-height: 1.14; }
+    .section-intro { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+    .panel {
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel);
+      padding: 26px; box-shadow: 0 16px 45px rgba(0,0,0,.12);
+    }
+    .about-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; }
+    .about-main p { color: var(--muted); font-size: 13px; }
+    .about-main p:last-child { margin-bottom: 0; }
+    .about-main strong { color: var(--soft); }
+    .side-stack { display: grid; gap: 14px; }
+    .mini-card { display: flex; flex-direction: column; justify-content: center; min-height: 130px; }
+    .mini-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .13em; font-weight: 700; }
+    .mini-value { font-family: "Space Grotesk",sans-serif; font-size: 21px; line-height: 1.25; letter-spacing: -.04em; margin: 9px 0 0; }
+    .mini-desc { margin: 6px 0 0; color: var(--muted); font-size: 11px; }
 
-        html {
-            scroll-behavior: smooth;
-        }
+    .education-card { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+    .education-card h3 { margin: 0 0 5px; font-size: 21px; }
+    .education-card p { margin: 0; color: var(--muted); font-size: 12px; }
+    .education-meta { text-align: right; }
+    .education-meta .degree { color: var(--soft); font-size: 12px; font-weight: 700; }
+    .education-meta .year { color: var(--muted); font-size: 11px; }
+    .skills-heading { margin: 27px 0 13px; color: #d9dcf0; font-size: 12px; font-weight: 700; }
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
+    .skill { padding: 8px 13px; border: 1px solid rgba(177,190,255,.16); border-radius: 999px; color: #d9dcf0; background: rgba(255,255,255,.035); font-size: 11px; font-weight: 600; }
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #0b1120;
-            color: #f1f5f9;
-            line-height: 1.6;
-        }
+    .projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 17px; }
+    .project-card { display: flex; flex-direction: column; min-height: 280px; position: relative; overflow: hidden; }
+    .project-card::after { content: ""; position: absolute; width: 160px; height: 160px; top: -105px; right: -80px; border-radius: 50%; background: rgba(167,139,250,.11); pointer-events: none; }
+    .project-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .project-type { color: var(--cyan); text-transform: uppercase; letter-spacing: .13em; font-size: 9px; font-weight: 700; }
+    .project-index { color: rgba(213,216,235,.42); font-family: "Space Grotesk",sans-serif; font-weight: 700; font-size: 11px; }
+    .project-card h3 { margin: 22px 0 9px; font-size: 21px; letter-spacing: -.045em; }
+    .project-card p { color: var(--muted); font-size: 12px; margin-bottom: 18px; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+    .project-tags span { font-size: 9px; color: #c3c8e0; background: rgba(167,139,250,.1); padding: 5px 9px; border-radius: 999px; }
+    .project-link { margin-top: auto; display: inline-flex; align-items: center; gap: 8px; color: var(--cyan); font-size: 11px; font-weight: 700; text-decoration: none; }
+    .project-link:hover { color: #c5f8ff; }
+    
+    .interest-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .interest-card { min-height: 180px; transition: transform .2s ease,border-color .2s ease; }
+    .interest-card:hover { transform: translateY(-4px); border-color: rgba(103,232,249,.35); }
+    .interest-number { color: var(--purple); font-family: "Space Grotesk",sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+    .interest-card h3 { margin: 22px 0 8px; font-size: 18px; letter-spacing: -.035em; }
+    .interest-card p { margin: 0; color: var(--muted); font-size: 12px; }
 
-        header {
-            background: #111827;
-            padding: 50px 20px;
-            text-align: center;
-            border-bottom: 1px solid #263244;
-        }
+    .experience-card { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; }
+    .experience-card h3 { margin: 5px 0; font-size: 18px; }
+    .experience-card p { margin: 0; color: var(--muted); font-size: 12px; }
+    .experience-label { color: var(--cyan); font-size: 10px; text-transform: uppercase; letter-spacing: .13em; font-weight: 700; }
+    .experience-tag { color: #d2c9ff; border: 1px solid rgba(167,139,250,.25); background: rgba(167,139,250,.09); border-radius: 999px; padding: 7px 12px; font-size: 10px; white-space: nowrap; }
 
-        header h1 {
-            margin: 0;
-            font-size: 42px;
-        }
+    .contact-panel {
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 30px;
+      padding: 32px; border-radius: 25px; border: 1px solid rgba(167,139,250,.28);
+      background: linear-gradient(115deg,rgba(76,66,132,.23),rgba(22,92,111,.16));
+    }
+    .contact-panel h2 { margin-top: 9px; }
+    .contact-panel p { max-width: 560px; margin-bottom: 18px; color: var(--muted); font-size: 12px; }
+    .contact-details { display: grid; gap: 9px; }
+    .contact-line { display: flex; flex-wrap: wrap; gap: 9px; font-size: 12px; }
+    .contact-line span { color: var(--muted); min-width: 55px; }
+    .contact-line a { color: var(--soft); font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
+    .contact-line a:hover { color: var(--cyan); }
+    .qr-wrap { display: grid; justify-items: center; gap: 8px; padding: 13px; border-radius: 17px; background: #fff; }
+    .qr-wrap img { display: block; width: 148px; height: 148px; image-rendering: pixelated; }
+    .qr-wrap span { color: #17182a; font-size: 9px; font-weight: 700; letter-spacing: .04em; }
+    footer { padding: 25px 0 34px; border-top: 1px solid rgba(177,190,255,.1); color: #8188a5; font-size: 10px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 18px; align-items: center; }
+    .footer-inner a { color: #b7bad0; text-decoration: none; }
+    .footer-inner a:hover { color: var(--cyan); }
 
-        header p {
-            margin-top: 8px;
-            color: #94a3b8;
-            font-size: 18px;
-        }
-
-        nav {
-            background: #0f172a;
-            padding: 15px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 1px solid #263244;
-        }
-
-        nav a {
-            color: #e2e8f0;
-            text-decoration: none;
-            margin: 0 18px;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            color: #60a5fa;
-        }
-
-        main {
-            max-width: 900px;
-            margin: auto;
-            padding: 40px 20px;
-        }
-
-        section {
-            margin-bottom: 55px;
-        }
-
-        h2 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #60a5fa;
-        }
-
-        .project {
-            background: #111827;
-            border: 1px solid #263244;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .project h3 {
-            margin-top: 0;
-            font-size: 23px;
-        }
-
-        .project p {
-            color: #cbd5e1;
-        }
-
-        .button {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 11px 18px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .button:hover {
-            background: #1d4ed8;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            background: #111827;
-            color: #94a3b8;
-            border-top: 1px solid #263244;
-        }
-
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 32px;
-            }
-
-            nav a {
-                margin: 0 8px;
-                font-size: 14px;
-            }
-
-            main {
-                padding: 30px 15px;
-            }
-        }
-    </style>
+    @media (max-width: 850px) {
+      .hero { min-height: auto; padding: 85px 0 75px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+      .profile-card { max-width: 520px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .side-stack { grid-template-columns: 1fr 1fr; }
+      .interest-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .container { width: min(var(--max),calc(100% - 32px)); }
+      .nav-wrap { min-height: 65px; gap: 8px; }
+      .brand { font-size: 15px; gap: 7px; }
+      .brand-mark { width: 33px; height: 33px; }
+      .nav-links { gap: 11px; }
+      .nav-links a { font-size: 10px; }
+      .nav-links .nav-contact { padding: 6px 9px; }
+      .hero { padding: 68px 0 56px; }
+      .hero-video { opacity: .36; }
+      h1 { font-size: clamp(39px,11vw,58px); }
+      .hero-copy { font-size: 13px; }
+      .profile-card { padding: 21px; }
+      .section { padding: 56px 0; }
+      .panel { padding: 21px; }
+      .side-stack,.projects-grid,.interest-grid { grid-template-columns: 1fr; }
+      .mini-card { min-height: 115px; }
+      .interest-card { min-height: auto; }
+      .interest-card h3 { margin-top: 14px; }
+      .education-card { grid-template-columns: 1fr; gap: 10px; }
+      .education-meta { text-align: left; }
+      .experience-card { grid-template-columns: 1fr; gap: 12px; }
+      .experience-tag { justify-self: start; }
+      .contact-panel { grid-template-columns: 1fr; padding: 24px; }
+      .qr-wrap { justify-self: start; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 390px) {
+      .nav-links { gap: 8px; }
+      .nav-links a { font-size: 9px; }
+      .nav-links .nav-contact { padding: 5px 7px; }
+      .brand { font-size: 13px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero-video { display: none; }
+      .hero::before { animation: none; }
+      *,*::before,*::after { transition-duration: .01ms !important; }
+    }
+  </style>
 </head>
-
 <body>
-
-    <header>
-        <h1>Abdulloh Abdurazzokov</h1>
-        <p>Student Portfolio</p>
-    </header>
-
-    <nav>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#home" aria-label="Abdulloh Abdurazzokov home">
+        <span class="brand-mark">AA</span>
+        <span>Abdulloh<span class="gradient-text">.</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
         <a href="#about">About</a>
+        <a href="#education">Education</a>
         <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-    </nav>
+        <a href="#interests">Interests</a>
+        <a class="nav-contact" href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-    <main>
+  <main>
+    <section class="hero" id="home">
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata"
+        poster="https://images.pexels.com/videos/30470987/pexels-photo-30470987.jpeg?auto=compress&dpr=1&h=750&w=1260"
+        aria-hidden="true">
+        <source src="https://videos.pexels.com/video-files/30470987/13057233_3840_2160_24fps.mp4" type="video/mp4">
+      </video>
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Student · Business × Technology</span>
+          <h1>Curious mind.<br><span class="gradient-text">Practical ideas.</span><br>Always building.</h1>
+          <p class="hero-copy">
+            Hi, I'm <strong>Abdulloh Abdurazzokov</strong> — a bachelor's student at
+            <strong>Dong-A University</strong> exploring how business, technology, and creativity
+            can come together. I enjoy learning by building projects, solving problems, and
+            turning ideas from class into things people can actually use.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#projects">Explore my projects <span class="arrow">↗</span></a>
+            <a class="btn btn-secondary" href="https://github.com/aabdurazzokov" target="_blank" rel="noopener noreferrer">Visit my GitHub <span class="arrow">↗</span></a>
+          </div>
+        </div>
 
-        <section id="about">
-            <h2>About Me</h2>
+        <aside class="profile-card" aria-label="Student profile">
+          <span class="profile-overline">A quick introduction</span>
+          <h2 class="profile-name">Abdulloh Abdurazzokov</h2>
+          <p class="profile-sub">Student · Creator · Lifelong learner</p>
+          <div class="profile-divider"></div>
+          <div class="profile-row"><span>University</span><span>Dong-A University</span></div>
+          <div class="profile-row"><span>Degree</span><span>Bachelor's</span></div>
+          <div class="profile-row"><span>Study stage</span><span>First year</span></div>
+          <div class="profile-row"><span>Major</span><span>IBM</span></div>
+          <div class="profile-row"><span>Based in</span><span>South Korea</span></div>
+          <p class="profile-note">A growing collection of my coursework, experiments, interests, and digital projects.</p>
+        </aside>
+      </div>
+    </section>
 
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-kicker">A little about me</span>
+          <h2>Learning today. Building for tomorrow.</h2>
+          <p class="section-intro">I'm interested in the space where clear communication, analytical thinking, and useful technology meet.</p>
+        </div>
+        <div class="about-grid">
+          <article class="panel about-main">
             <p>
-                Welcome to my student portfolio. This website contains my
-                projects, assignments, and work created during my studies.
+              My academic journey is helping me understand how organisations work, how people
+              communicate, and how information supports better decisions. Alongside my studies,
+              I enjoy exploring digital tools and creating small projects that make an idea tangible.
             </p>
-        </section>
-
-        <section id="projects">
-            <h2>Projects & Assignments</h2>
-
-            <div class="project">
-                <h3>Game Project</h3>
-
-                <p>
-                    Mana Earner is an interactive browser game created as part
-                    of my game development assignment. The player runs through
-                    a magical environment, collects gems, earns mana, and
-                    avoids obstacles.
-                </p>
-
-                <a class="button" href="mana_earner.html">
-                    View Game
-                </a>
-            </div>
-
-            <div class="project">
-                <h3>Data Detectives — Allocation Analysis Tool</h3>
-
-                <p>
-                    A browser-based data analysis tool for uploading CSV files,
-                    exploring and cleaning data, calculating statistics,
-                    creating charts, identifying outliers, and exporting results.
-                </p>
-
-                <a
-                    class="button"
-                    href="https://aabdurazzokov.github.io/blaclk/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Open Data Detectives Tool
-                </a>
-            </div>
-
-            <div class="project">
-                <h3>Assignment Google Document</h3>
-
-                <p>
-                    This document contains the work and information prepared
-                    for the game development assignment.
-                </p>
-
-                <a
-                    class="button"
-                    href="https://docs.google.com/document/d/1U5kAxOXh2L6km53jxCQ3x1TkMIkgiTfjfQYoeZBujdE/edit?usp=drivesdk"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    View Document
-                </a>
-            </div>
-
-        </section>
-
-        <section id="contact">
-            <h2>Contact</h2>
-
             <p>
-                Thank you for visiting my portfolio.
+              I've explored <strong>interactive design, data organisation, basic web development,
+              and problem-solving</strong> through browser-based projects. I like work that combines
+              a clear purpose with a thoughtful user experience.
             </p>
-        </section>
+            <p>
+              I also value teamwork and communication. As a class representative, I help share
+              information and coordinate class activities — a practical way to build responsibility,
+              organisation, and collaboration skills.
+            </p>
+          </article>
+          <div class="side-stack">
+            <article class="panel mini-card">
+              <span class="mini-label">What motivates me</span>
+              <p class="mini-value">Ideas into action</p>
+              <p class="mini-desc">Learning through projects, practice, and iteration.</p>
+            </article>
+            <article class="panel mini-card">
+              <span class="mini-label">What I'm exploring</span>
+              <p class="mini-value">Business + digital skills</p>
+              <p class="mini-desc">Communication, data, and practical technology.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    </main>
+    <section class="section" id="education">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-kicker">Education &amp; skills</span>
+          <h2>The foundation I'm building.</h2>
+          <p class="section-intro">My studies give me a foundation to keep developing both analytical and practical skills.</p>
+        </div>
+        <article class="panel education-card">
+          <div>
+            <h3>Dong-A University</h3>
+            <p>Undergraduate studies · South Korea</p>
+          </div>
+          <div class="education-meta">
+            <div class="degree">Bachelor's degree</div>
+            <div class="year">First-year student · Major: IBM</div>
+          </div>
+        </article>
+        <p class="skills-heading">Areas I'm developing</p>
+        <div class="skills-wrap" aria-label="Areas of interest and developing skills">
+          <span class="skill">Business communication</span>
+          <span class="skill">Data analysis</span>
+          <span class="skill">Data visualisation</span>
+          <span class="skill">HTML</span>
+          <span class="skill">CSS</span>
+          <span class="skill">JavaScript</span>
+          <span class="skill">Interactive projects</span>
+          <span class="skill">Problem-solving</span>
+          <span class="skill">Team coordination</span>
+          <span class="skill">Continuous learning</span>
+        </div>
+      </div>
+    </section>
 
-    <footer>
-        © 2026 Abdulloh Abdurazzokov. All rights reserved.
-    </footer>
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-kicker">Selected work</span>
+          <h2>Projects that make ideas real.</h2>
+          <p class="section-intro">A selection of coursework and browser-based experiments. Each project has helped me learn something new by making and testing it.</p>
+        </div>
+        <div class="projects-grid">
+          <article class="panel project-card">
+            <div class="project-top"><span class="project-type">Game development</span><span class="project-index">01 / 03</span></div>
+            <h3>Mana Earner</h3>
+            <p>An interactive browser game created for a game-development assignment. The player moves through a level, collects gems, earns mana, and tries to reach the target score.</p>
+            <div class="project-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Game design</span></div>
+            <a class="project-link" href="mana_earner.html">Play Mana Earner <span class="arrow">↗</span></a>
+          </article>
 
+          <article class="panel project-card">
+            <div class="project-top"><span class="project-type">Data &amp; analysis</span><span class="project-index">02 / 03</span></div>
+            <h3>Data Detectives — Allocation Analysis Tool</h3>
+            <p>A browser-based data tool for working with CSV files: exploring and cleaning data, calculating statistics, creating charts, identifying outliers, and exporting results.</p>
+            <div class="project-tags"><span>CSV</span><span>Statistics</span><span>Visualisation</span><span>Data handling</span></div>
+            <a class="project-link" href="https://aabdurazzokov.github.io/blaclk/" target="_blank" rel="noopener noreferrer">Open Data Detectives <span class="arrow">↗</span></a>
+          </article>
+
+          <article class="panel project-card">
+            <div class="project-top"><span class="project-type">Coursework</span><span class="project-index">03 / 03</span></div>
+            <h3>Game Development Assignment</h3>
+            <p>A document connected to my game-development coursework, collecting the assignment work and supporting information behind the project.</p>
+            <div class="project-tags"><span>Documentation</span><span>Planning</span><span>Coursework</span></div>
+            <a class="project-link" href="https://docs.google.com/document/d/1U5kAxOXh2L6km53jxCQ3x1TkMIkgiTfjfQYoeZBujdE/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View assignment document <span class="arrow">↗</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="interests">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-kicker">Beyond the classroom</span>
+          <h2>The things that keep me curious.</h2>
+          <p class="section-intro">My interests shape how I think, what I explore, and the projects I enjoy creating.</p>
+        </div>
+        <div class="interest-grid">
+          <article class="panel interest-card">
+            <span class="interest-number">01 — TECHNOLOGY</span>
+            <h3>Digital creativity</h3>
+            <p>I enjoy discovering useful tools, experimenting with digital ideas, and learning how websites and interactive experiences are made.</p>
+          </article>
+          <article class="panel interest-card">
+            <span class="interest-number">02 — GAMING</span>
+            <h3>Video games &amp; CS2</h3>
+            <p>I'm especially interested in Counter-Strike 2. I enjoy the competitive side of gaming, teamwork, communication, and the challenge of improving.</p>
+          </article>
+          <article class="panel interest-card">
+            <span class="interest-number">03 — GROWTH</span>
+            <h3>Learning by doing</h3>
+            <p>I like taking on new challenges, learning from mistakes, and turning what I study into practical projects and useful skills.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-kicker">Responsibility &amp; teamwork</span>
+          <h2>Learning to work with people.</h2>
+        </div>
+        <article class="panel experience-card">
+          <div>
+            <span class="experience-label">Student involvement</span>
+            <h3>Class Representative</h3>
+            <p>Helping communicate class information, coordinate activities, and make group tasks easier to organise. This role gives me opportunities to practise clear communication, reliability, and teamwork.</p>
+          </div>
+          <span class="experience-tag">Communication · Coordination</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-panel">
+          <div>
+            <span class="section-kicker">Get in touch</span>
+            <h2>Let's connect.</h2>
+            <p>For questions, collaboration, or opportunities, you can reach me using the contact details below.</p>
+            <div class="contact-details">
+              <div class="contact-line"><span>Phone</span><a href="tel:+821065161929">+82-010-6516-1929</a></div>
+              <div class="contact-line"><span>Email</span><a href="mailto:aabdurazzoqov207@gmail.com">aabdurazzoqov207@gmail.com</a></div>
+            </div>
+          </div>
+          <div class="qr-wrap">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAR0AAAEdAQAAAAAZEY7WAAAD1klEQVR42u2aQY7bOBBFH5sGqB11A/oikfpaAdQtddRALjF3iWVfhDpBqB0NyPqzYCeZ3cySGDQXAiTXolgo/vr/00b867o/8R/WZ9BnUJ1BSAkwiaADG92FgWzSEJzSADAq17q7Ubr4eWnw9z6Dje7RQl5aQtlWrYk/TMM2cbeJtel4OzdGJ+6vgHmqvZ/8Sw98j9loVr6Wb1PFPX76R7dft/sZ4K/V/NzBpEflJ9gqs+3r/SVMZKMdFObovwE6ak78zZhnCH5ep+Av24Rb1pczbNNqTFsvHJY1iw5CNtoDJlnR//qpVjjcXs4sLau7+GlF5oQ7eJwBVq7bVHnFFTFpjFo0x9wnKyfNka7WAVQmZzZpCOAntCQb6bwieCmbVG/imqUDG6VEyKWz04CkndzX2uMlcXfBSodXxCQrd4HgDqyouuIT7vBzzPgd8LPcwSg6P9eNKoza7LrTdLyTu21aM7ByW+9n81wrqjzBZs5N50/AttPc0tczt/To3aNlrXrk+4m8tF97rtiY4bvMK3C3ckItNbPDpl/nRUrvH5xQ7fdFj7Z2mTSsemvB9GEKDTxMvmkKmMSquVYhgZQI9Gkgm0TIfRqjOxgCHQN0vmJUAZbWqvnSDn+MlJVbAm5rxVxlCvTJxgyEjJ/llKzc4WfVW3GkZCMUQBmCLhTRTzYJ3FLz5FR0SlYUKq496IKVW9Io+qpHfnBLsioy7ZelEugYgjsqbhVNwSmNyvg5Fs3ZJxtzX3XFn4Ax3k37OLtj2/E/zImssNNceTPuW8UDaDutUoLmplPYXr1iwzaRv4Q53l+r9w5tpINAB9BRSDmZuqWbDi/RFTWxB6c0xtxhY718HKlInjFq0R7cxe+h7AO/o6VuOKSX5JRGaSmoQqDze6gax9MQMAl+zf0BtySCO/we3FF1jwcpDSF3fkIXL+WOMRbGWLOvIkkXPyGlURSHBStgCFLVvkrMvfbglAgZwF3KYywGYrWJ72jRjo4CKDt0jLEwWlPzyH8P95f2PTRmdZFruZY4hQxvxh2+YiExK5tkY7l6UxrIQNBSKGLFFX8Y92gJ+hHmaPowxwbGeH8uI79qsfzHoy2HU8nqg7XUzMf/2LOztGgPdL8NxJoP52aMeeKdBh7GPG8T7rJNazapXEvU2yqjtJQTOsot2oMOxo/XmqVbGnCLFOlT+RTchSEAUC9X+R306MHPEQpNsR/XP9eKcTwVOljKnvs0BCdJmMJtK7bgrDJ+4v7Svp39N+/i9rSZs3u0dsmmatMTTLEibCzzsi/+0AdjrLLi5vPPZJ9B//OgvwEnySMBPrke9wAAAABJRU5ErkJggg==" alt="QR code to save Abdulloh's contact details">
+            <span>SCAN TO SAVE CONTACT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© 2026 Abdulloh Abdurazzokov. All rights reserved.</span>
+      <span>Background footage: <a href="https://www.pexels.com/video/modern-gaming-setup-with-rgb-lighting-30470987/" target="_blank" rel="noopener noreferrer">Pexels</a>.</span>
+    </div>
+  </footer>
 </body>
 </html>
