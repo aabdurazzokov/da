@@ -102,11 +102,16 @@
     .hero-copy strong { color: #f0efff; font-weight: 700; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 29px; }
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px;
-      padding: 0 20px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: 700;
-      transition: transform .2s ease,border-color .2s ease,background .2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px;
+      padding: 0 22px; border-radius: 999px; text-decoration: none; font-size: 12px; font-weight: 700;
+      transition: transform .22s cubic-bezier(.2,1.6,.4,1),box-shadow .22s ease,border-color .22s ease,background .22s ease;
+      box-shadow: 0 7px 0 rgba(4,7,19,.28);
     }
-    .btn:hover { transform: translateY(-3px); }
+    .btn:hover { transform: translateY(-5px) rotate(-1deg) scale(1.035); box-shadow: 0 12px 24px rgba(103,232,249,.16); }
+    .btn:active { transform: translateY(1px) scale(.98); box-shadow: 0 2px 0 rgba(4,7,19,.28); }
+    .btn-primary { animation: button-bob 3.6s ease-in-out infinite; }
+    @keyframes button-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    .btn-primary:hover { animation-play-state: paused; }
     .btn-primary { color: #101124; background: linear-gradient(110deg,var(--cyan),#b9a2ff); box-shadow: 0 10px 30px rgba(111,183,229,.16); }
     .btn-secondary { color: var(--text); border: 1px solid var(--line); background: rgba(255,255,255,.045); }
     .btn-secondary:hover { border-color: rgba(167,139,250,.6); background: rgba(167,139,250,.1); }
@@ -294,7 +299,7 @@
 
         <aside class="profile-card" aria-label="Student profile">
           <span class="profile-overline">A quick introduction</span>
-          <h2 class="profile-name">Abdulloh Abdurazzokov</h2>
+          
           <p class="profile-sub">Student · Creator · Lifelong learner</p>
           <div class="profile-divider"></div>
           <div class="profile-row"><span>University</span><span>Dong-A University</span></div>
