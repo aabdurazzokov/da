@@ -51,7 +51,8 @@ function roadY(z){return 150+z*430}
 function update(dt){
 if(g.mode!=="playing")return;g.time+=dt;g.speed=Math.min(520,270+g.time*2.05);g.player.visual+=(g.player.lane-g.player.visual)*Math.min(1,dt*13);g.player.jump=Math.max(0,g.player.jump-dt);g.player.hit=Math.max(0,g.player.hit-dt);g.player.run+=dt*13;g.flash=Math.max(0,g.flash-dt);
 g.spawn-=dt;if(g.spawn<=0){safeSpawn();g.spawn=Math.max(.43,.92-g.time*.004)+Math.random()*.28}
-g.crystal-=dt;if(g.crystal<=0){crystalSpawn();g.crystal=10+Math.random()*9}\ng.meteor-=dt;if(g.meteor<=0){add("meteor",Math.floor(Math.random()*3),-.35);g.meteor=3.2+Math.random()*2.4}
+g.crystal-=dt;if(g.crystal<=0){crystalSpawn();g.crystal=10+Math.random()*9}
+g.meteor-=dt;if(g.meteor<=0){add("meteor",Math.floor(Math.random()*3),-.35);g.meteor=3.2+Math.random()*2.4}
 if(Math.random()<dt*(.45+g.time*.008))obstacleSpawn();
 for(let i=g.objects.length-1;i>=0;i--){let o=g.objects[i];o.z+=dt*(.33+g.speed/1300);if(o.z>1.06){g.objects.splice(i,1);continue}
 if(o.z>.84&&!o.hit&&o.lane===Math.round(g.player.visual)){
