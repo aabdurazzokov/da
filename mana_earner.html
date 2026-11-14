@@ -1,508 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mana Earner</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b18"><title>Mana Earner</title>
 <style>
-  * { box-sizing: border-box; }
-  :root {
-    --bg:#08111d; --panel:#0d1b2a; --path:#26374a; --text:#eef5ff;
-    --muted:#9fb0c5; --gold:#ffd34d; --silver:#d9e5ef; --danger:#ff6262;
-    --accent:#71e6ff;
-  }
-  body {
-    margin:0; min-height:100vh; background:
-      radial-gradient(circle at 50% 10%, #183454 0, #08111d 50%, #04090f 100%);
-    color:var(--text); font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-    display:flex; align-items:center; justify-content:center; padding:18px;
-  }
-  .game {
-    width:min(1000px,100%); background:rgba(13,27,42,.96);
-    border:1px solid #29425d; border-radius:16px; overflow:hidden;
-    box-shadow:0 25px 70px rgba(0,0,0,.55);
-  }
-  header {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 18px; border-bottom:1px solid #29425d; gap:12px;
-  }
-  h1 { margin:0; font-size:20px; letter-spacing:.5px; }
-  .subtitle { color:var(--muted); font-size:12px; margin-top:2px; }
-  .scorebox { display:flex; gap:18px; text-align:right; }
-  .scorebox strong { display:block; color:var(--gold); font-size:23px; }
-  .scorebox span { color:var(--muted); font-size:11px; }
-  #gameCanvas { display:block; width:100%; background:#091522; }
-  .controls {
-    display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
-    gap:9px; padding:13px; border-top:1px solid #29425d;
-  }
-  button {
-    border:1px solid #3b5c7b; background:#13283d; color:var(--text);
-    border-radius:8px; padding:9px 15px; cursor:pointer; font-weight:700;
-  }
-  button:hover { background:#1a3854; }
-  button.primary { border-color:#62d8ee; color:#bdf5ff; }
-  .help { color:var(--muted); font-size:12px; }
-  .status { text-align:center; min-height:25px; color:var(--muted); font-size:13px; padding-bottom:12px; }
-  @media(max-width:600px) {
-    body { padding:0; }
-    .game { border-radius:0; width:100%; }
-    header { padding:11px 13px; }
-    h1 { font-size:17px; }
-    .scorebox { gap:10px; }
-    .scorebox strong { font-size:19px; }
-    .help { width:100%; text-align:center; }
-  }
+:root{color-scheme:dark;--ink:#f4f5ff;--muted:#aab3d0;--cyan:#73e8f5;--gold:#ffd76b;--panel:#101a31}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#26366b 0,#0a1024 48%,#050914 100%);color:var(--ink);font:15px system-ui,sans-serif;display:grid;place-items:center;padding:18px}
+main{width:min(1100px,100%);border:1px solid #596b9b66;border-radius:22px;overflow:hidden;background:#0a1124eF;box-shadow:0 28px 90px #0009}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 22px;border-bottom:1px solid #8294c433;flex-wrap:wrap}
+h1{font-size:clamp(20px,4vw,29px);margin:0;letter-spacing:-.04em}.sub{color:var(--muted);font-size:12px;margin-top:3px}
+.stats{display:flex;gap:clamp(10px,3vw,28px);flex-wrap:wrap}.stat{text-align:center;min-width:55px}.stat b{display:block;font-size:22px;color:var(--gold);font-variant-numeric:tabular-nums}.stat small{font-size:10px;color:var(--muted);letter-spacing:.12em}
+#stage{display:block;width:100%;height:auto;aspect-ratio:1000/570;background:#091326;touch-action:pan-y}
+footer{padding:14px 18px 17px;border-top:1px solid #8294c433;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap}button{border:1px solid #6378a7;background:#182647;color:var(--ink);border-radius:10px;padding:10px 17px;font-weight:700;cursor:pointer}button:hover{background:#263b68}button.primary{background:linear-gradient(110deg,#7ce9f3,#b7a2ff);color:#101329;border:0}.help{font-size:12px;color:var(--muted)}#message{color:#d9e2ff;font-size:12px;text-align:right;flex:1;min-width:180px}
+@media(max-width:600px){body{padding:0}main{border-radius:0;min-height:100vh}header{padding:13px}.stats{width:100%;justify-content:space-between}.stat b{font-size:19px}footer{padding:12px}.help{width:100%;order:2}#message{text-align:left}}
 </style>
 </head>
-<body>
-<div class="game">
-  <header>
-    <div>
-      <h1>Mana Earner</h1>
-      <div class="subtitle">Run. Collect gems. Earn mana.</div>
-    </div>
-    <div class="scorebox">
-      <div><strong id="mana">0</strong><span>MANA</span></div>
-      <div><strong id="distance">0</strong><span>DISTANCE</span></div>
-      <div><strong id="best">0</strong><span>BEST</span></div>
-    </div>
-  </header>
-
-  <canvas id="gameCanvas" width="960" height="480" aria-label="Mana Earner game"></canvas>
-
-  <div class="controls">
-    <button id="start" class="primary">Start</button>
-    <button id="restart">Restart</button>
-    <span class="help">Controls: ← → move &nbsp; | &nbsp; ↑ / Space jump &nbsp; | &nbsp; ↓ move down</span>
-  </div>
-  <div id="status" class="status">Press Start to begin your run.</div>
-</div>
-
+<body><main>
+<header><div><h1>Mana Earner</h1><div class="sub">Run the enchanted path · Gather mana · Survive the run</div></div>
+<div class="stats">
+<div class="stat"><b id="mana">0</b><small>MANA</small></div>
+<div class="stat"><b id="best">0</b><small>PERSONAL BEST</small></div>
+<div class="stat"><b id="lives">♥ ♥ ♥</b><small>LIVES</small></div>
+<div class="stat"><b id="time">0:00</b><small>TIME</small></div>
+<div class="stat"><b id="level">EASY</b><small>DIFFICULTY</small></div>
+</div></header>
+<canvas id="stage" width="1000" height="570" aria-label="Mana Earner three-lane fantasy running game"></canvas>
+<footer><div class="actions"><button class="primary" id="start">Start</button><button id="pause">Pause</button><button id="restart">Restart</button></div><div class="help">← / → change lanes · Space jump · P pause · Touch: swipe left/right or tap to jump</div><div id="message">Press Start to begin your run.</div></footer>
+</main>
 <script>
 "use strict";
-
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const manaEl = document.getElementById("mana");
-const distanceEl = document.getElementById("distance");
-const bestEl = document.getElementById("best");
-const statusEl = document.getElementById("status");
-const startBtn = document.getElementById("start");
-const restartBtn = document.getElementById("restart");
-
-const W = canvas.width, H = canvas.height;
-const groundY = 380;
-
-let best = Number(localStorage.getItem("manaEarnerBest") || 0);
-bestEl.textContent = best;
-
-let game = null;
-let lastTime = 0;
-let animationId = null;
-
-function newGame() {
-  return {
-    running: false,
-    over: false,
-    won: false,
-    mana: 0,
-    distance: 0,
-    speed: 280,
-    spawnTimer: 0.8,
-    obstacleTimer: 1.7,
-    gems: [],
-    obstacles: [],
-    particles: [],
-    player: {
-      x: 170, y: groundY - 58, w: 36, h: 58,
-      vy: 0, lane: 1, targetLane: 1, jumping: false
-    }
-  };
+const c=document.getElementById("stage"),x=c.getContext("2d"),$=id=>document.getElementById(id);
+const W=1000,H=570,store="manaEarnerBest",laneX=[350,500,650];
+let best=0;try{best=Number(localStorage.getItem(store))||0}catch{}$("best").textContent=best;
+let g,raf=0,last=0,pressed=new Set();
+function fresh(){return{mode:"ready",mana:0,lives:3,time:0,speed:270,spawn:1,crystal:7,objects:[],particles:[],player:{lane:1,visual:1,jump:0,hit:0,run:0},newBest:false,flash:0}}
+function reset(){g=fresh();ui();draw();$("message").textContent="Press Start to begin your run."}
+function begin(){if(g.mode==="over")g=fresh();if(g.mode==="paused")g.mode="playing";else if(g.mode==="ready")g.mode="playing";else return;$("message").textContent="Collect gems and avoid the stone steps.";last=performance.now();if(!raf)raf=requestAnimationFrame(loop);ui()}
+function pause(){if(g.mode==="playing"){g.mode="paused";$("message").textContent="Paused · press P or Resume to continue";ui();draw() }else if(g.mode==="paused")begin()}
+function restart(){g=fresh();begin()}
+function finish(){g.mode="over";if(g.mana>best){best=g.mana;g.newBest=true;try{localStorage.setItem(store,String(best))}catch{} }$("message").textContent=g.newBest?"NEW PERSONAL BEST!":"Run complete · Try again to beat your record.";ui()}
+function level(){return g.time<30?"EASY":g.time<60?"MEDIUM":g.time<90?"HARD":"VERY HARD"}
+function ui(){$("mana").textContent=g.mana;$("best").textContent=best;$("lives").textContent="♥ ".repeat(g.lives).trim()||"—";$("time").textContent=Math.floor(g.time/60)+":"+String(Math.floor(g.time%60)).padStart(2,"0");$("level").textContent=level()}
+function add(kind,lane,z=1){g.objects.push({kind,lane,z,hit:false,phase:Math.random()*6})}
+function safeSpawn(){let lane=Math.floor(Math.random()*3);add(Math.random()<.58?"silver":"gold",lane);if(Math.random()<.24)add("silver",(lane+1+Math.floor(Math.random()*2))%3)}
+function obstacleSpawn(){let lane=Math.floor(Math.random()*3);add("step",lane);if(Math.random()<.22&&g.time>35)add("silver",(lane+1)%3)}
+function crystalSpawn(){add("crystal",Math.floor(Math.random()*3))}
+function laneScreen(lane,z){const curve=Math.sin((1-z)*2.1)*70;return 500+(lane-1)*((150+z*100))+curve}
+function roadY(z){return 150+z*430}
+function update(dt){
+if(g.mode!=="playing")return;g.time+=dt;g.speed=Math.min(520,270+g.time*2.05);g.player.visual+=(g.player.lane-g.player.visual)*Math.min(1,dt*13);g.player.jump=Math.max(0,g.player.jump-dt);g.player.hit=Math.max(0,g.player.hit-dt);g.player.run+=dt*13;g.flash=Math.max(0,g.flash-dt);
+g.spawn-=dt;if(g.spawn<=0){safeSpawn();g.spawn=Math.max(.43,.92-g.time*.004)+Math.random()*.28}
+g.crystal-=dt;if(g.crystal<=0){crystalSpawn();g.crystal=10+Math.random()*9}
+if(Math.random()<dt*(.45+g.time*.008))obstacleSpawn();
+for(let i=g.objects.length-1;i>=0;i--){let o=g.objects[i];o.z+=dt*(.33+g.speed/1300);if(o.z>1.06){g.objects.splice(i,1);continue}
+if(o.z>.84&&!o.hit&&o.lane===Math.round(g.player.visual)){
+if(o.kind==="silver"||o.kind==="gold"||o.kind==="crystal"){o.hit=true;if(o.kind==="silver"||o.kind==="gold"){g.mana+=o.kind==="gold"?2:1;burst(laneScreen(o.lane,o.z),roadY(o.z),o.kind==="gold"?"#ffd76b":"#dcecff")}else{if(g.lives<3)g.lives++;burst(laneScreen(o.lane,o.z),roadY(o.z),"#ffd76b")}g.objects.splice(i,1)}
+else if(o.kind==="step"&&g.player.jump<=0&&g.player.hit<=0){o.hit=true;g.lives--;g.player.hit=.65;g.flash=.25;burst(laneScreen(o.lane,o.z),roadY(o.z),"#ff667e");if(g.lives<=0){finish();return}}
+}}
+for(let i=g.particles.length-1;i>=0;i--){let p=g.particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.life<=0)g.particles.splice(i,1)}
+if(g.mana>best){/* record is committed at end of run */}ui()
 }
-
-function reset() {
-  game = newGame();
-  statusEl.textContent = "Press Start to begin your run.";
-  updateUI();
-  draw();
-}
-
-function start() {
-  if (!game || game.over) game = newGame();
-  if (game.running) return;
-  game.running = true;
-  game.over = false;
-  statusEl.textContent = "Collect gems and avoid the obstacles!";
-  lastTime = performance.now();
-  if (!animationId) animationId = requestAnimationFrame(loop);
-}
-
-function restart() {
-  game = newGame();
-  game.running = true;
-  game.over = false;
-  statusEl.textContent = "New run started.";
-  lastTime = performance.now();
-  if (!animationId) animationId = requestAnimationFrame(loop);
-}
-
-function endGame(message, won=false) {
-  game.running = false;
-  game.over = true;
-  game.won = won;
-  if (game.mana > best) {
-    best = game.mana;
-    localStorage.setItem("manaEarnerBest", String(best));
-  }
-  statusEl.textContent = message + " Press Restart to try again.";
-  updateUI();
-}
-
-function updateUI() {
-  manaEl.textContent = game.mana;
-  distanceEl.textContent = Math.floor(game.distance);
-  bestEl.textContent = best;
-}
-
-function laneY(lane) {
-  return [groundY - 58, groundY - 58, groundY - 58][lane];
-}
-
-function moveLane(dir) {
-  if (!game || !game.running) return;
-  game.player.targetLane = Math.max(0, Math.min(2, game.player.targetLane + dir));
-}
-
-function jump() {
-  if (!game || !game.running) return;
-  if (!game.player.jumping) {
-    game.player.vy = -690;
-    game.player.jumping = true;
-  }
-}
-
-function spawnGem() {
-  const lane = Math.floor(Math.random() * 3);
-  const gold = Math.random() < 0.28;
-  game.gems.push({
-    x: W + 35, y: groundY - 25 - lane * 70,
-    r: gold ? 14 : 11, value: gold ? 2 : 1, gold, lane,
-    bob: Math.random() * Math.PI * 2
-  });
-}
-
-function spawnObstacle() {
-  const lane = Math.floor(Math.random() * 3);
-  const tall = Math.random() < 0.32;
-  game.obstacles.push({
-    x: W + 40, y: groundY - (tall ? 78 : 48) - lane * 70,
-    w: tall ? 34 : 45, h: tall ? 78 : 48, lane
-  });
-}
-
-function rectCircleCollision(rect, circle) {
-  const closestX = Math.max(rect.x, Math.min(circle.x, rect.x + rect.w));
-  const closestY = Math.max(rect.y, Math.min(circle.y, rect.y + rect.h));
-  const dx = circle.x - closestX, dy = circle.y - closestY;
-  return dx * dx + dy * dy < circle.r * circle.r;
-}
-
-function rectsOverlap(a,b) {
-  return a.x < b.x+b.w && a.x+a.w > b.x &&
-         a.y < b.y+b.h && a.y+a.h > b.y;
-}
-
-function playerRect() {
-  const p = game.player;
-  return {x:p.x, y:p.y, w:p.w, h:p.h};
-}
-
-function collect(gem) {
-  game.mana += gem.value;
-  for (let i=0;i<10;i++) {
-    game.particles.push({
-      x:gem.x, y:gem.y, vx:(Math.random()-.5)*140,
-      vy:(Math.random()-.5)*140, life:.55, gold:gem.gold
-    });
-  }
-}
-
-function update(dt) {
-  if (!game.running) return;
-
-  game.distance += game.speed * dt / 10;
-  game.speed = Math.min(520, 280 + game.distance * 0.35);
-
-  const p = game.player;
-  const desiredY = groundY - 58 - p.targetLane * 70;
-  p.y += (desiredY - p.y) * Math.min(1, dt * 10);
-
-  p.vy += 1800 * dt;
-  p.y += p.vy * dt;
-
-  const baseY = groundY - 58 - p.targetLane * 70;
-  if (p.y >= baseY) {
-    p.y = baseY;
-    p.vy = 0;
-    p.jumping = false;
-  }
-
-  game.spawnTimer -= dt;
-  if (game.spawnTimer <= 0) {
-    spawnGem();
-    game.spawnTimer = Math.max(.42, .78 - game.distance/1500) + Math.random()*.45;
-  }
-
-  game.obstacleTimer -= dt;
-  if (game.obstacleTimer <= 0) {
-    spawnObstacle();
-    game.obstacleTimer = Math.max(.72, 1.35 - game.distance/1300) + Math.random()*.7;
-  }
-
-  for (const g of game.gems) {
-    g.x -= game.speed * dt;
-    g.bob += dt * 5;
-    g.y += Math.sin(g.bob) * 12 * dt;
-  }
-
-  for (const o of game.obstacles) o.x -= game.speed * dt;
-
-  const pr = playerRect();
-
-  for (let i=game.gems.length-1;i>=0;i--) {
-    if (rectCircleCollision(pr, game.gems[i])) {
-      collect(game.gems[i]);
-      game.gems.splice(i,1);
-    } else if (game.gems[i].x < -40) {
-      game.gems.splice(i,1);
-    }
-  }
-
-  for (const o of game.obstacles) {
-    if (rectsOverlap(pr,o)) {
-      endGame("Run ended: you hit an obstacle.", false);
-      return;
-    }
-  }
-
-  game.obstacles = game.obstacles.filter(o => o.x > -80);
-
-  for (let i=game.particles.length-1;i>=0;i--) {
-    const q = game.particles[i];
-    q.x += q.vx*dt;
-    q.y += q.vy*dt;
-    q.life -= dt;
-    if (q.life <= 0) game.particles.splice(i,1);
-  }
-
-  // A simple target-based win condition keeps the run goal achievable.
-  if (game.mana >= 25) {
-    endGame("You win! You earned 25 mana and completed the run.", true);
-  }
-
-  updateUI();
-}
-
-function drawBackground() {
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,"#071321");
-  grad.addColorStop(1,"#102237");
-  ctx.fillStyle=grad;
-  ctx.fillRect(0,0,W,H);
-
-  // stars
-  ctx.fillStyle="rgba(255,255,255,.55)";
-  for(let i=0;i<45;i++){
-    const x=(i*173)%W, y=(i*71)%280;
-    ctx.fillRect(x,y,2,2);
-  }
-
-  // distant mountains
-  ctx.fillStyle="#101f31";
-  ctx.beginPath();
-  ctx.moveTo(0,groundY);
-  for(let x=0;x<=W;x+=80) {
-    ctx.lineTo(x,300-((x*37)%100));
-  }
-  ctx.lineTo(W,groundY);
-  ctx.closePath();
-  ctx.fill();
-
-  // running path
-  ctx.fillStyle="#26374a";
-  ctx.fillRect(0,groundY,W,H-groundY);
-  ctx.strokeStyle="#52667b";
-  ctx.setLineDash([30,20]);
-
-  for(let y=groundY+35;y<H;y+=42) {
-    ctx.beginPath();
-    ctx.moveTo(0,y);
-    ctx.lineTo(W,y);
-    ctx.stroke();
-  }
-
-  ctx.setLineDash([]);
-
-  // lane guides
-  ctx.strokeStyle="rgba(137,171,200,.18)";
-  for(let i=1;i<3;i++) {
-    const y=groundY-i*70;
-    ctx.beginPath();
-    ctx.moveTo(0,y+15);
-    ctx.lineTo(W,y+15);
-    ctx.stroke();
-  }
-}
-
-function drawPlayer() {
-  const p=game.player;
-  ctx.save();
-  ctx.translate(p.x,p.y);
-
-  // shadow
-  ctx.fillStyle="rgba(0,0,0,.35)";
-  ctx.beginPath();
-  ctx.ellipse(18,62,25,6,0,0,Math.PI*2);
-  ctx.fill();
-
-  // cape
-  ctx.fillStyle="#4d72ff";
-  ctx.beginPath();
-  ctx.moveTo(8,20);
-  ctx.lineTo(-8,51);
-  ctx.lineTo(12,44);
-  ctx.lineTo(23,55);
-  ctx.lineTo(27,20);
-  ctx.closePath();
-  ctx.fill();
-
-  // body
-  ctx.fillStyle="#71e6ff";
-  ctx.fillRect(9,20,20,28);
-
-  ctx.fillStyle="#f0c9a8";
-  ctx.beginPath();
-  ctx.arc(19,12,10,0,Math.PI*2);
-  ctx.fill();
-
-  // legs
-  ctx.strokeStyle="#d8e8f2";
-  ctx.lineWidth=6;
-  ctx.beginPath();
-  ctx.moveTo(14,47);
-  ctx.lineTo(8,59);
-  ctx.moveTo(25,47);
-  ctx.lineTo(31,59);
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-function drawGem(g) {
-  ctx.save();
-  ctx.translate(g.x,g.y);
-  ctx.rotate(Math.PI/4);
-  ctx.fillStyle=g.gold ? "#ffd34d" : "#d9e5ef";
-  ctx.shadowColor=ctx.fillStyle;
-  ctx.shadowBlur=16;
-  ctx.fillRect(-g.r*.7,-g.r*.7,g.r*1.4,g.r*1.4);
-  ctx.restore();
-}
-
-function drawObstacle(o) {
-  ctx.save();
-  ctx.fillStyle="#d64d5a";
-  ctx.shadowColor="rgba(255,70,80,.35)";
-  ctx.shadowBlur=10;
-
-  ctx.beginPath();
-  ctx.moveTo(o.x,o.y+o.h);
-  ctx.lineTo(o.x+o.w*.5,o.y);
-  ctx.lineTo(o.x+o.w,o.y+o.h);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle="#ff9a9a";
-  ctx.fillRect(o.x+o.w*.45,o.y+o.h*.35,4,4);
-
-  ctx.restore();
-}
-
-function draw() {
-  drawBackground();
-
-  if (!game) return;
-
-  for(const o of game.obstacles) drawObstacle(o);
-  for(const g of game.gems) drawGem(g);
-
-  for(const q of game.particles) {
-    ctx.globalAlpha=Math.max(0,q.life/.55);
-    ctx.fillStyle=q.gold ? "#ffd34d" : "#d9e5ef";
-    ctx.fillRect(q.x,q.y,4,4);
-  }
-
-  ctx.globalAlpha=1;
-  drawPlayer();
-
-  if (!game.running && !game.over) {
-    overlay("MANA EARNER", "Press Start or Space to run");
-  } else if (game.over) {
-    overlay(
-      game.won ? "RUN COMPLETE" : "RUN OVER",
-      game.won ? "25 mana reached" : "Avoid obstacles next time"
-    );
-  }
-}
-
-function overlay(title, subtitle) {
-  ctx.fillStyle="rgba(3,8,14,.58)";
-  ctx.fillRect(0,0,W,H);
-
-  ctx.textAlign="center";
-
-  ctx.fillStyle="#eef5ff";
-  ctx.font="bold 42px system-ui";
-  ctx.fillText(title,W/2,H/2-10);
-
-  ctx.fillStyle="#b8c9d9";
-  ctx.font="18px system-ui";
-  ctx.fillText(subtitle,W/2,H/2+30);
-
-  ctx.textAlign="left";
-}
-
-function loop(now) {
-  animationId = requestAnimationFrame(loop);
-  const dt = Math.min(.035, (now-lastTime)/1000 || 0);
-  lastTime = now;
-  update(dt);
-  draw();
-}
-
-document.addEventListener("keydown", e => {
-  if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," "].includes(e.key)) {
-    e.preventDefault();
-  }
-
-  if (e.key === "ArrowLeft") {
-    moveLane(-1);
-  } else if (e.key === "ArrowRight") {
-    moveLane(1);
-  } else if (e.key === "ArrowUp" || e.key === " ") {
-    if (!game.running) start();
-    else jump();
-  } else if (e.key === "ArrowDown") {
-    moveLane(1);
-  }
-});
-
-startBtn.addEventListener("click", start);
-restartBtn.addEventListener("click", restart);
-
-reset();
-animationId = requestAnimationFrame(loop);
-</script>
-</body>
-</html>
+function burst(px,py,color){for(let i=0;i<12;i++){let a=Math.random()*Math.PI*2,s=40+Math.random()*130;g.particles.push({x:px,y:py,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.55,color})}}
+function path(){let grad=x.createLinearGradient(0,100,0,H);grad.addColorStop(0,"#26375d");grad.addColorStop(1,"#17223b");x.fillStyle=grad;x.beginPath();x.moveTo(350,150);x.bezierCurveTo(170,280,220,430,210,570);x.lineTo(790,570);x.bezierCurveTo(780,430,830,280,650,150);x.closePath();x.fill();
+for(let i=0;i<4;i++){let t=i/3;x.strokeStyle=i===0||i===3?"#8fa8cf88":"#a8b8db55";x.lineWidth=i===0||i===3?4:2;x.beginPath();let bx=350+t*300;x.moveTo(bx,150);x.bezierCurveTo(170+t*660,280,220+t*560,430,210+t*580,570);x.stroke()}
+for(let z=0;z<12;z++){let yy=165+z*37+(g.time*90%37);x.strokeStyle="#b8c9ee18";x.beginPath();x.moveTo(500-(yy-150)*.34,yy);x.lineTo(500+(yy-150)*.34,yy);x.stroke()}}
+function background(){let gr=x.createLinearGradient(0,0,0,H);gr.addColorStop(0,"#101d3c");gr.addColorStop(.55,"#172b43");gr.addColorStop(1,"#080f20");x.fillStyle=gr;x.fillRect(0,0,W,H);
+for(let i=0;i<65;i++){let xx=(i*173)%W,yy=(i*83)%300;x.fillStyle=i%3?"#dce7ff88":"#ffe7a088";x.fillRect(xx,yy,2,2)}
+for(let i=0;i<6;i++){let xx=i*205-40;x.fillStyle="#111d35";x.beginPath();x.moveTo(xx,190);x.lineTo(xx+80,80+(i%3)*35);x.lineTo(xx+160,190);x.fill()}
+path()}
+function gem(px,py,r,color){x.save();x.translate(px,py);x.rotate(Math.PI/4);x.shadowColor=color;x.shadowBlur=20;x.fillStyle=color;x.fillRect(-r,-r,r*2,r*2);x.fillStyle="#ffffff88";x.fillRect(-r/2,-r/2,r/2,r/2);x.restore()}
+function drawObj(o){let z=o.z,px=laneScreen(o.lane,z),py=roadY(z),scale=.35+z*.8;x.save();x.translate(px,py);x.scale(scale,scale);
+if(o.kind==="silver")gem(0,-17,10,"#dcecff");else if(o.kind==="gold")gem(0,-20,13,"#ffd45c");else if(o.kind==="crystal"){x.shadowColor="#ffdc70";x.shadowBlur=28;x.fillStyle="#ffda65";x.beginPath();x.moveTo(0,-35);x.lineTo(17,-12);x.lineTo(12,13);x.lineTo(0,24);x.lineTo(-12,13);x.lineTo(-17,-12);x.closePath();x.fill();x.strokeStyle="#fff4be";x.lineWidth=3;x.stroke()}else{x.fillStyle="#786d83";x.strokeStyle="#c3b5d0";x.lineWidth=3;x.shadowColor="#d2b6ff";x.shadowBlur=10;x.beginPath();x.moveTo(-35,0);x.lineTo(-35,-25);x.lineTo(-10,-25);x.lineTo(-10,-50);x.lineTo(35,-50);x.lineTo(35,0);x.closePath();x.fill();x.stroke();x.fillStyle="#a89ab0";x.fillRect(-31,-21,17,4);x.fillRect(-5,-46,34,4)}
+x.restore()}
+function player(){let p=g.player,px=laneScreen(p.visual,.98),py=roadY(.98)-(p.jump>0?Math.sin((.55-p.jump)/.55*Math.PI)*105:0);x.save();x.translate(px,py);x.scale(1,1);x.fillStyle="#0008";x.beginPath();x.ellipse(0,8,28,8,0,0,7);x.fill();if(p.hit>0)x.globalAlpha=.45+Math.sin(p.hit*35)*.4;
+x.fillStyle="#725dff";x.beginPath();x.moveTo(-10,-57);x.lineTo(-30,-18);x.lineTo(-7,-29);x.lineTo(12,-12);x.lineTo(18,-58);x.fill();x.fillStyle="#65dff1";x.fillRect(-12,-61,25,36);x.fillStyle="#eac6a9";x.beginPath();x.arc(0,-73,13,0,7);x.fill();x.fillStyle="#18213c";x.fillRect(-10,-80,20,6);
+x.strokeStyle="#d9e7ff";x.lineWidth=7;x.lineCap="round";let swing=Math.sin(p.run)*8;x.beginPath();x.moveTo(-6,-26);x.lineTo(-12+swing,-3);x.moveTo(7,-26);x.lineTo(13-swing,-3);x.stroke();x.restore()}
+function overlay(title,sub){x.fillStyle="#030716b8";x.fillRect(0,0,W,H);x.textAlign="center";x.shadowColor="#9b8cff";x.shadowBlur=22;x.fillStyle="#f5f4ff";x.font="700 48px system-ui";x.fillText(title,500,245);x.shadowBlur=0;x.fillStyle="#d4def9";x.font="18px system-ui";x.fillText(sub,500,285);x.font="14px system-ui";if(g.mode==="over"){x.fillText("Final mana: "+g.mana+"    ·    Personal best: "+best,500,325);if(g.newBest){x.fillStyle="#ffdf83";x.font="bold 18px system-ui";x.fillText("NEW PERSONAL BEST!",500,365)}}else if(g.mode==="ready")x.fillText("← / → to switch lanes · SPACE to jump",500,325);else if(g.mode==="paused")x.fillText("Press P or Pause to resume",500,325);x.textAlign="left"}
+function draw(){background();for(let o of [...g.objects].sort((a,b)=>a.z-b.z))drawObj(o);for(let p of g.particles){x.globalAlpha=Math.max(0,p.life/.55);x.fillStyle=p.color;x.fillRect(p.x,p.y,5,5)}x.globalAlpha=1;player();if(g.flash){x.fillStyle="#ff345522";x.fillRect(0,0,W,H)}if(g.mode==="ready")overlay("MANA EARNER","Collect silver and gold mana gems");if(g.mode==="paused")overlay("PAUSED","Your run is waiting");if(g.mode==="over")overlay("RUN OVER","The enchanted path claims another runner")}
+function loop(now){raf=0;let dt=Math.min(.04,(now-last)/1000||0);last=now;update(dt);draw();if(g.mode==="playing")raf=requestAnimationFrame(loop)}
+function request(){if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}}
+function lane(d){if(g.mode!=="playing")return;g.player.lane=Math.max(0,Math.min(2,g.player.lane+d))}
+function jump(){if(g.mode==="ready"){begin();return}if(g.mode==="playing"&&g.player.jump<=0)g.player.jump=.55}
+document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight"," ","ArrowUp"].includes(e.key))e.preventDefault();if(pressed.has(e.key))return;pressed.add(e.key);if(e.key==="ArrowLeft")lane(-1);if(e.key==="ArrowRight")lane(1);if(e.key===" "||e.key==="ArrowUp")jump();if(e.key.toLowerCase()==="p")pause()});
+document.addEventListener("keyup",e=>pressed.delete(e.key));window.addEventListener("blur",()=>pressed.clear());
+let touchX=null;c.addEventListener("touchstart",e=>{touchX=e.changedTouches[0].clientX},{passive:true});c.addEventListener("touchend",e=>{if(touchX===null)return;let dx=e.changedTouches[0].clientX-touchX;if(Math.abs(dx)>25)lane(dx<0?-1:1);else jump();touchX=null},{passive:true});
+$("start").onclick=begin;$("pause").onclick=pause;$("restart").onclick=restart;
+reset();draw();
+</script></body></html>
