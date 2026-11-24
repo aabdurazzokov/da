@@ -230,6 +230,35 @@
     }
     .crypto-note { margin: 17px 0 0; color: #aeb8d0; font-size: 10px; line-height: 1.7; }
     .crypto-note strong { color: var(--soft); }
+    .decode-grid {
+      display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px;
+    }
+    .decode-item {
+      min-width: 0; padding: 17px; border: 1px solid rgba(177,190,255,.13);
+      border-radius: 16px; background: rgba(255,255,255,.025);
+    }
+    .decode-item h4 {
+      margin: 12px 0 7px; font-family: "Space Grotesk",sans-serif;
+      font-size: 16px; letter-spacing: -.035em;
+    }
+    .decode-item p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.75; }
+    .decode-flow {
+      display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 20px;
+    }
+    .decode-step {
+      position: relative; padding: 15px; border: 1px solid rgba(103,232,249,.16);
+      border-radius: 13px; background: rgba(103,232,249,.035); min-width: 0;
+    }
+    .decode-step span {
+      color: var(--cyan); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .decode-step strong { display: block; margin: 6px 0 4px; font-size: 12px; }
+    .decode-step p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
+    .decode-callout {
+      margin: 16px 0 0; padding: 13px 15px; border-left: 2px solid var(--purple);
+      border-radius: 0 10px 10px 0; background: rgba(167,139,250,.06);
+      color: #c8cce0; font-size: 11px; line-height: 1.75;
+    }
     @media (max-width: 850px) {
       .hero { min-height: auto; padding: 85px 0 75px; }
       .hero-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -237,6 +266,7 @@
       .about-grid { grid-template-columns: 1fr; }
       .side-stack { grid-template-columns: 1fr 1fr; }
       .interest-grid { grid-template-columns: 1fr 1fr; }
+      .decode-grid,.decode-flow { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
       .container { width: min(var(--max),calc(100% - 32px)); }
@@ -253,7 +283,7 @@
       .profile-card { padding: 21px; }
       .section { padding: 56px 0; }
       .panel { padding: 21px; }
-      .side-stack,.projects-grid,.interest-grid { grid-template-columns: 1fr; }
+      .side-stack,.projects-grid,.interest-grid,.decode-grid,.decode-flow { grid-template-columns: 1fr; }
       .mini-card { min-height: 115px; }
       .interest-card { min-height: auto; }
       .interest-card h3 { margin-top: 14px; }
@@ -432,6 +462,66 @@
             </article>
           </div>
           <p class="crypto-note"><strong>Implementation note:</strong> The current Message Workbench provides Vigenère (DD1), AES-256-GCM (DD2), and ROT13. Rail Fence is included here as an additional cipher concept studied, not as a current button in the tool.</p>
+        </article>
+
+        <article class="crypto-overview" aria-labelledby="decode-guide-title">
+          <div class="crypto-heading">
+            <span class="section-kicker">Understanding the process</span>
+            <h3 id="decode-guide-title">Encoding, decoding, encryption &amp; decryption.</h3>
+            <p>These terms are related, but they describe different operations. Understanding the difference is essential when reading a DD2 record.</p>
+          </div>
+          <div class="decode-grid">
+            <article class="decode-item">
+              <span class="crypto-index">01 / Representation</span>
+              <h4>Encoding</h4>
+              <p>Encoding changes how data is represented so it can be stored or transmitted in a suitable format. Base64URL, for example, represents bytes as text. Encoding does not provide secrecy and does not require a secret key.</p>
+            </article>
+            <article class="decode-item">
+              <span class="crypto-index">02 / Reverse representation</span>
+              <h4>Decoding</h4>
+              <p>Decoding reverses an encoding method. Base64URL decoding turns the text representation back into bytes. Those bytes may still be encrypted; decoding alone does not reveal the original message.</p>
+            </article>
+            <article class="decode-item">
+              <span class="crypto-index">03 / Protection</span>
+              <h4>Encryption</h4>
+              <p>Encryption transforms readable plaintext into ciphertext using a cipher and the required key or settings. Vigenère uses a repeating keyword; AES-256-GCM uses a 256-bit key and a nonce.</p>
+            </article>
+            <article class="decode-item">
+              <span class="crypto-index">04 / Recovery</span>
+              <h4>Decryption</h4>
+              <p>Decryption reverses encryption with the correct key and required parameters. AES-GCM also verifies the authentication tag. If authentication fails, the tool must not present the result as a valid message.</p>
+            </article>
+          </div>
+
+          <div class="divider"></div>
+          <div class="crypto-heading">
+            <span class="section-kicker">Inside a DD2 record</span>
+            <h3>How an encrypted message becomes readable.</h3>
+            <p>The Message Workbench performs these separate steps when it processes an AES-256-GCM record.</p>
+          </div>
+          <div class="decode-flow">
+            <div class="decode-step">
+              <span>Step 01</span>
+              <strong>Read the envelope</strong>
+              <p>Separate the DD2 format label, MessageID, nonce, authentication tag and ciphertext field.</p>
+            </div>
+            <div class="decode-step">
+              <span>Step 02</span>
+              <strong>Decode Base64URL</strong>
+              <p>Convert the ciphertext's Base64URL text into its original byte sequence. It is still encrypted at this point.</p>
+            </div>
+            <div class="decode-step">
+              <span>Step 03</span>
+              <strong>Decrypt and verify</strong>
+              <p>Use the AES key, nonce, ciphertext, tag and any required Additional Authenticated Data (AAD).</p>
+            </div>
+            <div class="decode-step">
+              <span>Step 04</span>
+              <strong>Return plaintext</strong>
+              <p>Only after authentication succeeds can the original readable message be returned as plaintext.</p>
+            </div>
+          </div>
+          <p class="decode-callout"><strong>Important distinction:</strong> A MessageID identifies a record; it is not the AES key. A nonce is needed for decryption but is not secret. The authentication tag checks integrity and authenticity. AAD is optional metadata that must match the value used during encryption whenever the original message was created with AAD.</p>
         </article>
       </div>
     </section>
