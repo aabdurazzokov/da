@@ -207,6 +207,29 @@
     .footer-inner a { color: #b7bad0; text-decoration: none; }
     .footer-inner a:hover { color: var(--cyan); }
 
+    .crypto-overview {
+      margin-top: 20px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: linear-gradient(145deg,rgba(18,27,47,.92),rgba(12,20,36,.92));
+      box-shadow: 0 16px 45px rgba(0,0,0,.12);
+    }
+    .crypto-heading { max-width: 720px; margin-bottom: 22px; }
+    .crypto-heading h3 { margin: 9px 0; font-size: clamp(21px,3vw,28px); letter-spacing: -.045em; }
+    .crypto-heading p { margin: 0; color: var(--muted); font-size: 12px; }
+    .crypto-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+    .crypto-item {
+      min-width: 0; padding: 17px; border: 1px solid rgba(177,190,255,.13);
+      border-radius: 16px; background: rgba(255,255,255,.025);
+    }
+    .crypto-index { color: var(--cyan); font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .crypto-item h4 { margin: 13px 0 7px; font-family: "Space Grotesk",sans-serif; font-size: 17px; letter-spacing: -.035em; }
+    .crypto-item p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.75; }
+    .crypto-example {
+      display: block; margin-top: 13px; padding: 9px 10px; border-radius: 9px;
+      background: rgba(103,232,249,.06); color: #c8edf4; font: 10px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+      overflow-wrap: anywhere;
+    }
+    .crypto-note { margin: 17px 0 0; color: #aeb8d0; font-size: 10px; line-height: 1.7; }
+    .crypto-note strong { color: var(--soft); }
     @media (max-width: 850px) {
       .hero { min-height: auto; padding: 85px 0 75px; }
       .hero-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -365,13 +388,13 @@
           </article>
 
           <article class="panel project-card">
-            <div class="project-top"><span class="project-type">Data &amp; analysis</span><span class="project-index">02 / 03</span></div>
-            <h3>Data Detectives Project</h3>
-            <p>A data-analysis project featuring a browser-based tool for exploring and cleaning CSV files, calculating statistics, creating charts, identifying outliers, and exporting results.</p>
-            <div class="project-tags"><span>CSV</span><span>Statistics</span><span>Visualisation</span><span>Data handling</span></div>
+            <div class="project-top"><span class="project-type">Data analysis &amp; cryptography</span><span class="project-index">02 / 03</span></div>
+            <h3>Data Detectives &amp; Message Workbench</h3>
+            <p>A browser-based investigation workspace for communication records. It can load CSV or TXT files, inspect message IDs, process Vigenère (DD1), AES-256-GCM (DD2), and ROT13 records, compare letter-frequency distributions, review per-record results, and export processed data.</p>
+            <div class="project-tags"><span>CSV analysis</span><span>Vigenère</span><span>AES-256-GCM</span><span>ROT13</span><span>Data validation</span></div>
             <a class="project-link" href="https://aabdurazzokov.github.io/blaclk/" target="_blank" rel="noopener noreferrer">Open Data Detectives Tool <span class="arrow">↗</span></a>
             <a class="project-link" href="https://drive.google.com/drive/folders/17cvEb1vbCbivOQyMDJLB3GNGDKLEeo_o" target="_blank" rel="noopener noreferrer">Open Project Folder <span class="arrow">↗</span></a>
-            <a class="btn btn-primary" href="assignment3_message_tool.html">Assignment 3 <span class="arrow">↗</span></a>
+            <a class="btn btn-primary" href="assignment3_message_tool.html">Open Message Workbench <span class="arrow">↗</span></a>
           </article>
 
           <article class="panel project-card">
@@ -382,6 +405,34 @@
             <a class="project-link" href="https://docs.google.com/document/d/1U5kAxOXh2L6km53jxCQ3x1TkMIkgiTfjfQYoeZBujdE/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View assignment document <span class="arrow">↗</span></a>
           </article>
         </div>
+        <article class="crypto-overview" aria-labelledby="crypto-overview-title">
+          <div class="crypto-heading">
+            <span class="section-kicker">Cryptography concepts</span>
+            <h3 id="crypto-overview-title">Three different ways to transform a message.</h3>
+            <p>Alongside the communication-records workbench, I explored how classical ciphers and modern authenticated encryption approach the problem of protecting information.</p>
+          </div>
+          <div class="crypto-grid">
+            <article class="crypto-item">
+              <span class="crypto-index">01 / Substitution</span>
+              <h4>Vigenère — DD1</h4>
+              <p>A repeating keyword determines how far each letter shifts through the alphabet (A = 0, B = 1, and so on). Spaces and punctuation stay unchanged. Because the key repeats, letter patterns can still leak information, so Vigenère is useful for learning rather than protecting modern secrets.</p>
+              <code class="crypto-example">ATTACKATDAWN + LEMON<br>→ LXFOPVEFRNHR</code>
+            </article>
+            <article class="crypto-item">
+              <span class="crypto-index">02 / Authenticated encryption</span>
+              <h4>AES-256-GCM — DD2</h4>
+              <p>AES uses a 256-bit key, while GCM adds authentication to detect an incorrect key or altered encrypted data. The workbench's DD2 envelope packages a message ID, a 96-bit nonce, a 128-bit authentication tag, and encoded ciphertext. Additional authenticated data can protect related metadata without encrypting it.</p>
+              <code class="crypto-example">DD2.MessageID.nonceHex<br>.tagHex.ciphertextBase64url</code>
+            </article>
+            <article class="crypto-item">
+              <span class="crypto-index">03 / Transposition</span>
+              <h4>Rail Fence</h4>
+              <p>This cipher rearranges character positions instead of replacing letters. The message is written in a zigzag across a chosen number of rails, then read row by row. It is simple to demonstrate and easy to reverse, but the small number of possible rail settings makes it weak for real security.</p>
+              <code class="crypto-example">WEAREDISCOVERED<br>→ WECRERDSOEEAIVD</code>
+            </article>
+          </div>
+          <p class="crypto-note"><strong>Implementation note:</strong> The current Message Workbench provides Vigenère (DD1), AES-256-GCM (DD2), and ROT13. Rail Fence is included here as an additional cipher concept studied, not as a current button in the tool.</p>
+        </article>
       </div>
     </section>
 
